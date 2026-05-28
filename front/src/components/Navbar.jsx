@@ -70,7 +70,10 @@ export default function Navbar() {
       </aside>
 
       {/* Mobile bottom bar */}
-      <nav className="md:hidden fixed inset-x-0 bottom-0 bg-sidebar border-t border-white/5 flex z-50 safe-area-inset-bottom">
+      <nav
+        className="md:hidden fixed inset-x-0 bottom-0 bg-sidebar border-t border-white/5 flex z-50"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
         {LINKS.map(({ to, icon, label, end }) => (
           <NavLink
             key={to}

@@ -9,7 +9,7 @@ import Laundry from './pages/Laundry';
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="flex h-screen bg-stone-50 overflow-hidden font-sans">
+      <div className="flex h-screen bg-stone-50 overflow-hidden font-sans" style={{ height: '100dvh' }}>
         <Navbar />
         <main className="flex-1 overflow-y-auto">
           <Routes>
