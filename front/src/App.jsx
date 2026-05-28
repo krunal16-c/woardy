@@ -5,12 +5,11 @@ import Wardrobe from './pages/Wardrobe';
 import Calendar from './pages/Calendar';
 import OutfitPlanner from './pages/OutfitPlanner';
 import Laundry from './pages/Laundry';
-import './App.css';
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
-      <div className="flex h-screen bg-slate-50 overflow-hidden">
+      <div className="flex h-screen bg-stone-50 overflow-hidden font-sans">
         <Navbar />
         <main className="flex-1 overflow-y-auto">
           <Routes>
@@ -26,5 +25,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;

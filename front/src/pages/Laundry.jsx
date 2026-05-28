@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
-import { getLaundry, markAsWashed, IMG_URL } from '../api.service';
+import { getLaundry, markAsWashed, IMG_BASE } from '../api.service';
 
-const CAT_ICON = {
-  tops: '👕', bottoms: '👖', outerwear: '🧥',
-  shoes: '👟', accessories: '💍', dresses: '👗',
-};
+const CAT_ICON = { tops: 'tshirt', bottoms: 'straighten', outerwear: 'dry_cleaning', shoes: 'steps', accessories: 'diamond', dresses: 'styler' };
 
-function WashBadge({ count }) {
-  const color =
-    count >= 5 ? 'bg-red-100 text-red-700' :
-    count >= 3 ? 'bg-orange-100 text-orange-700' :
-    'bg-amber-100 text-amber-700';
+function Icon({ name, size = 18, filled = false, className = '' }) {
   return (
-    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${color}`}>
-      Worn {count}× since wash
+    <span className={`material-symbols-outlined ${className}`}
+      style={{ fontSize: size, fontVariationSettings: `'FILL' ${filled ? 1 : 0}, 'wght' 300, 'GRAD' 0, 'opsz' 24` }}>
+      {name}
     </span>
   );
+}
+
+function UrgencyBadge({ count }) {
+  if (count >= 5) return <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-100">Worn {count}× — urgent</span>;
+  if (count >= 3) return <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-100">Worn {count}× since wash</span>;
+  return <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-100">Worn {count}× since wash</span>;
 }
 
 export default function Laundry() {
@@ -29,116 +29,121 @@ export default function Laundry() {
 
   async function load() {
     setLoading(true);
-    const data = await getLaundry();
+    const data = await getLaundry().catch(() => ({ items: [], isWeekend: false }));
     setItems(Array.isArray(data?.items) ? data.items : []);
-    setIsWeekend(data?.isWeekend || false);
+    setIsWeekend(!!data?.isWeekend);
     setLoading(false);
   }
 
-  async function handleWashItem(id) {
+  async function washItem(id) {
     setWashing(prev => new Set([...prev, id]));
-    await markAsWashed([id]);
+    await markAsWashed([id]).catch(() => {});
     setItems(prev => prev.filter(i => i.id !== id));
     setWashing(prev => { const s = new Set(prev); s.delete(id); return s; });
   }
 
-  async function handleWashAll() {
-    if (items.length === 0) return;
+  async function washAll() {
+    if (!items.length) return;
     setWashingAll(true);
-    const ids = items.map(i => i.id);
-    await markAsWashed(ids);
+    await markAsWashed(items.map(i => i.id)).catch(() => {});
     setItems([]);
     setWashingAll(false);
   }
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-6 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-5">
+    <div className="p-5 md:p-8 pb-24 md:pb-8 max-w-2xl mx-auto">
+      <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Laundry Tracker</h1>
-          <p className="text-gray-500 text-sm">Items worn multiple times since last wash</p>
+          <h1 className="text-[28px] font-bold text-stone-900 tracking-tight">Laundry</h1>
+          <p className="text-stone-400 text-sm mt-0.5">Items worn multiple times since last wash</p>
         </div>
         {items.length > 0 && (
-          <button
-            onClick={handleWashAll}
-            disabled={washingAll}
-            className="bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50"
-          >
-            {washingAll ? 'Washing...' : '🧼 Wash all'}
+          <button onClick={washAll} disabled={washingAll}
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-50 shrink-0">
+            <Icon name="local_laundry_service" size={16} filled />
+            {washingAll ? 'Washing…' : 'Wash all'}
           </button>
         )}
       </div>
 
       {/* Weekend banner */}
       {isWeekend && (
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-2xl p-5 mb-5 shadow-md">
-          <p className="text-xl mb-1">🌟 Weekend time!</p>
-          <p className="text-emerald-100 text-sm">Perfect day to do your laundry and refresh your wardrobe.</p>
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-2xl px-5 py-4 mb-5 shadow-card-md">
+          <div className="flex items-center gap-3">
+            <Icon name="weekend" size={28} filled className="opacity-90" />
+            <div>
+              <p className="font-bold text-base">Weekend — perfect laundry time!</p>
+              <p className="text-emerald-100 text-sm mt-0.5">A fresh wardrobe starts with clean clothes.</p>
+            </div>
+          </div>
         </div>
       )}
 
       {loading ? (
-        <div className="text-center py-16 text-gray-400">Loading...</div>
+        <div className="text-center py-20 text-stone-300 text-sm">Loading…</div>
       ) : items.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
-          <p className="text-5xl mb-3">✨</p>
-          <p className="font-medium text-gray-600">All clean!</p>
-          <p className="text-sm mt-1">No items need washing right now.</p>
-          <p className="text-xs mt-2 text-gray-400">Items appear here after being worn 2+ times since last wash.</p>
+        <div className="text-center py-20">
+          <Icon name="check_circle" size={52} filled className="text-emerald-300 mb-3" />
+          <p className="text-sm font-bold text-stone-600">All clean!</p>
+          <p className="text-xs text-stone-400 mt-1">Items appear here after being worn 2+ times since the last wash.</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          <p className="text-sm text-gray-500">{items.length} item{items.length !== 1 ? 's' : ''} need washing</p>
+        <div className="space-y-2">
+          <p className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">
+            {items.length} item{items.length !== 1 ? 's' : ''} need washing
+          </p>
           {items.map(item => (
-            <LaundryItem
-              key={item.id}
-              item={item}
-              onWash={handleWashItem}
-              busy={washing.has(item.id)}
-            />
+            <LaundryRow key={item.id} item={item} onWash={washItem} busy={washing.has(item.id)} />
           ))}
         </div>
       )}
 
       {/* Legend */}
-      <div className="mt-8 bg-gray-50 rounded-xl p-4 text-xs text-gray-500">
-        <p className="font-medium text-gray-700 mb-2">When do items appear here?</p>
-        <p>• Worn <strong>2×</strong> since last wash → appears in list (amber)</p>
-        <p>• Worn <strong>3×</strong> → getting urgent (orange)</p>
-        <p>• Worn <strong>5+×</strong> → definitely needs washing (red)</p>
-        <p className="mt-2">Click "Mark as washed" to reset the counter.</p>
+      <div className="mt-10 bg-white border border-stone-100 rounded-2xl p-4 shadow-card">
+        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2.5">Urgency guide</p>
+        <div className="space-y-1.5">
+          {[
+            { label: 'Worn 2×', desc: 'Appears in list', style: 'bg-amber-50 text-amber-700 border-amber-100' },
+            { label: 'Worn 3×', desc: 'Getting urgent', style: 'bg-orange-50 text-orange-700 border-orange-100' },
+            { label: 'Worn 5+×', desc: 'Definitely needs washing', style: 'bg-red-50 text-red-700 border-red-100' },
+          ].map(r => (
+            <div key={r.label} className="flex items-center gap-2.5 text-xs text-stone-600">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${r.style}`}>{r.label}</span>
+              <span className="text-stone-400">→</span>
+              <span>{r.desc}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function LaundryItem({ item, onWash, busy }) {
-  const src = item.imageUrl ? `${IMG_URL}${item.imageUrl}` : null;
+function LaundryRow({ item, onWash, busy }) {
+  const src = item.imageUrl ? `${IMG_BASE}${item.imageUrl}` : null;
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
-      <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0 border border-gray-200">
+    <div className="bg-white border border-stone-100 shadow-card rounded-2xl p-4 flex items-center gap-3">
+      <div className="w-12 h-12 rounded-xl overflow-hidden bg-stone-100 border border-stone-200 flex items-center justify-center shrink-0">
         {src
           ? <img src={src} alt={item.name} className="w-full h-full object-cover" />
-          : <span className="text-2xl">{CAT_ICON[item.category] || '👔'}</span>}
+          : <Icon name={CAT_ICON[item.category] || 'checkroom'} size={22} className="text-stone-300" />}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-gray-800 truncate">{item.name}</p>
-        <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <WashBadge count={item.wornSinceWash} />
-          {item.color && <span className="text-xs text-gray-400">{item.color}</span>}
+        <p className="text-sm font-semibold text-stone-800 truncate mb-1">{item.name}</p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <UrgencyBadge count={item.wornSinceWash} />
+          {item.color && <span className="text-[10px] text-stone-400">{item.color}</span>}
         </div>
         {item.lastWashed && (
-          <p className="text-xs text-gray-400 mt-1">
-            Last washed: {new Date(item.lastWashed).toLocaleDateString()}
+          <p className="text-[10px] text-stone-400 mt-1">
+            Last washed {new Date(item.lastWashed).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </p>
         )}
       </div>
-      <button
-        onClick={() => onWash(item.id)}
-        disabled={busy}
-        className="flex-shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-2 rounded-xl text-sm font-medium hover:bg-emerald-100 transition-colors disabled:opacity-50 whitespace-nowrap"
-      >
-        {busy ? '...' : '🧼 Washed'}
+      <button onClick={() => onWash(item.id)} disabled={busy}
+        className="shrink-0 flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-2 rounded-xl text-xs font-bold transition-colors disabled:opacity-50 whitespace-nowrap">
+        <Icon name="local_laundry_service" size={14} filled />
+        {busy ? '…' : 'Washed'}
       </button>
     </div>
   );
