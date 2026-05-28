@@ -12,10 +12,26 @@ function Icon({ name, size = 18, filled = false, className = '' }) {
   );
 }
 
-function UrgencyBadge({ count }) {
-  if (count >= 5) return <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-100">Worn {count}× — urgent</span>;
-  if (count >= 3) return <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-100">Worn {count}× since wash</span>;
-  return <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-100">Worn {count}× since wash</span>;
+const URGENCY_STYLE = {
+  due:     'bg-amber-50  text-amber-700  border-amber-100',
+  overdue: 'bg-orange-50 text-orange-700 border-orange-100',
+  urgent:  'bg-red-50    text-red-700    border-red-100',
+};
+
+const URGENCY_LABEL = {
+  due:     'Due for a wash',
+  overdue: 'Overdue',
+  urgent:  'Wash urgently!',
+};
+
+function UrgencyBadge({ wornSinceWash, washThreshold, urgency }) {
+  const style = URGENCY_STYLE[urgency] || URGENCY_STYLE.due;
+  const label = URGENCY_LABEL[urgency] || 'Due for a wash';
+  return (
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${style}`}>
+      {wornSinceWash}/{washThreshold}× — {label}
+    </span>
+  );
 }
 
 export default function Laundry() {
@@ -91,7 +107,7 @@ export default function Laundry() {
       ) : (
         <div className="space-y-2">
           <p className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">
-            {items.length} item{items.length !== 1 ? 's' : ''} need washing
+            {items.length} item{items.length !== 1 ? 's' : ''} reached wash threshold
           </p>
           {items.map(item => (
             <LaundryRow key={item.id} item={item} onWash={washItem} busy={washing.has(item.id)} />
@@ -99,19 +115,35 @@ export default function Laundry() {
         </div>
       )}
 
-      {/* Legend */}
+      {/* Wash threshold guide */}
       <div className="mt-10 bg-white border border-stone-100 rounded-2xl p-4 shadow-card">
-        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2.5">Urgency guide</p>
-        <div className="space-y-1.5">
+        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">When each type needs washing</p>
+        <div className="space-y-2">
           {[
-            { label: 'Worn 2×', desc: 'Appears in list', style: 'bg-amber-50 text-amber-700 border-amber-100' },
-            { label: 'Worn 3×', desc: 'Getting urgent', style: 'bg-orange-50 text-orange-700 border-orange-100' },
-            { label: 'Worn 5+×', desc: 'Definitely needs washing', style: 'bg-red-50 text-red-700 border-red-100' },
+            { icon: 'tshirt',       label: 'Tops',       rule: 'Every 2 wears',  note: 'Summer/light tops: every 1 wear' },
+            { icon: 'straighten',   label: 'Bottoms',    rule: 'Every 3 wears',  note: 'Denim: every 5 · Sport: every 1' },
+            { icon: 'styler',       label: 'Dresses',    rule: 'Every 2 wears',  note: 'Formal/evening: every 3 · Sport: every 1' },
+            { icon: 'dry_cleaning', label: 'Outerwear',  rule: 'Every 8 wears',  note: 'Sport outerwear: every 1' },
+            { icon: 'fitness_center', label: 'Sport items', rule: 'Every 1 wear', note: 'Any category tagged sport/athletic' },
           ].map(r => (
-            <div key={r.label} className="flex items-center gap-2.5 text-xs text-stone-600">
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${r.style}`}>{r.label}</span>
-              <span className="text-stone-400">→</span>
-              <span>{r.desc}</span>
+            <div key={r.label} className="flex items-start gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-stone-50 border border-stone-100 flex items-center justify-center shrink-0 mt-0.5">
+                <Icon name={r.icon} size={14} className="text-stone-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-stone-700">{r.label}</span>
+                  <span className="text-[10px] font-bold text-stone-400">{r.rule}</span>
+                </div>
+                <p className="text-[10px] text-stone-400 mt-0.5">{r.note}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 pt-3 border-t border-stone-100 flex gap-3 flex-wrap">
+          {Object.entries(URGENCY_STYLE).map(([key, style]) => (
+            <div key={key} className="flex items-center gap-1.5">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${style}`}>{URGENCY_LABEL[key]}</span>
             </div>
           ))}
         </div>
@@ -132,7 +164,11 @@ function LaundryRow({ item, onWash, busy }) {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-stone-800 truncate mb-1">{item.name}</p>
         <div className="flex items-center gap-2 flex-wrap">
-          <UrgencyBadge count={item.wornSinceWash} />
+          <UrgencyBadge
+            wornSinceWash={item.wornSinceWash}
+            washThreshold={item.washThreshold}
+            urgency={item.urgency}
+          />
           {item.color && <span className="text-[10px] text-stone-400">{item.color}</span>}
         </div>
         {item.lastWashed && (
