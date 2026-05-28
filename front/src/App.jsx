@@ -1,26 +1,30 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import AssignmentTitle from '@/assignment_title'
-import PostsContext from '@/PostsContext'
-import CreatePost from '@/CreatePost'
-import HomePage from '@/home_page'
-import AllPosts from '@/AllPosts'
-import '@/App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Dashboard from './pages/Dashboard';
+import Wardrobe from './pages/Wardrobe';
+import Calendar from './pages/Calendar';
+import OutfitPlanner from './pages/OutfitPlanner';
+import Laundry from './pages/Laundry';
+import './App.css';
 
-function App () {
+function App() {
   return (
-    <div className='App'>
-      <PostsContext>
-        <BrowserRouter>
-          <AssignmentTitle></AssignmentTitle>
+    <BrowserRouter>
+      <div className="flex h-screen bg-slate-50 overflow-hidden">
+        <Navbar />
+        <main className="flex-1 overflow-y-auto">
           <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route path='/create' element={<CreatePost />} />
-            <Route path='/posts' element={<AllPosts />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/wardrobe" element={<Wardrobe />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/planner" element={<OutfitPlanner />} />
+            <Route path="/laundry" element={<Laundry />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </BrowserRouter>
-      </PostsContext>
-    </div>
-  )
+        </main>
+      </div>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
