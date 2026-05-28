@@ -152,7 +152,7 @@ export default function OutfitPlanner() {
           <p className="text-stone-400 text-sm mt-0.5">7-day suggestions based on weather &amp; calendar</p>
         </div>
         <button onClick={generate} disabled={generating}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors shadow-sm disabled:opacity-60 shrink-0">
+          className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-3 md:px-4 py-2.5 rounded-xl transition-colors shadow-sm disabled:opacity-60 shrink-0">
           <Icon name="auto_awesome" size={16} filled={!generating} className={generating ? 'animate-spin' : ''} />
           {generating ? 'Generating…' : 'Generate'}
         </button>

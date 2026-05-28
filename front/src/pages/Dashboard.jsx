@@ -52,13 +52,13 @@ function StatCard({ icon, label, value, sub, colorClass, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="bg-white rounded-2xl border border-stone-100 shadow-card p-4 text-left hover:shadow-card-md transition-shadow w-full"
+      className="bg-white rounded-2xl border border-stone-100 shadow-card p-3 md:p-4 text-left hover:shadow-card-md transition-shadow w-full"
     >
-      <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${colorClass}`}>
-        <Icon name={icon} size={18} filled className="opacity-80" />
+      <div className={`w-8 h-8 md:w-9 md:h-9 rounded-xl flex items-center justify-center mb-2 md:mb-3 ${colorClass}`}>
+        <Icon name={icon} size={16} filled className="opacity-80" />
       </div>
-      <p className="text-2xl font-bold text-stone-800 leading-none mb-1">{value}</p>
-      <p className="text-[11px] text-stone-400 font-medium uppercase tracking-wide">{sub}</p>
+      <p className="text-xl md:text-2xl font-bold text-stone-800 leading-none mb-1">{value}</p>
+      <p className="text-[10px] md:text-[11px] text-stone-400 font-medium uppercase tracking-wide">{sub}</p>
     </button>
   );
 }
@@ -148,7 +148,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
         {/* Weather */}
         <div className="bg-indigo-600 rounded-2xl p-5 text-white relative overflow-hidden shadow-card-md">
           <div className="absolute -right-4 -top-4 w-28 h-28 bg-white/5 rounded-full" />
@@ -193,7 +193,7 @@ export default function Dashboard() {
         </div>
 
         {/* Today's outfit */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-stone-100 shadow-card p-5">
+        <div className="md:col-span-2 bg-white rounded-2xl border border-stone-100 shadow-card p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-stone-600 uppercase tracking-wide">Today's Outfit</h2>
             {todayOutfit?.status === 'worn' && (

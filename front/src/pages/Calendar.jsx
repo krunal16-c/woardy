@@ -56,7 +56,7 @@ function AppleIcon() {
 function Toast({ message, type, onDismiss }) {
   useEffect(() => { const t = setTimeout(onDismiss, 4000); return () => clearTimeout(t); }, []);
   return (
-    <div className={`fixed top-4 right-4 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-card-lg text-sm font-medium animate-fade-in ${
+    <div className={`fixed top-4 left-4 right-4 md:left-auto md:right-4 md:max-w-xs z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-card-lg text-sm font-medium ${
       type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'
     }`}>
       <Icon name={type === 'success' ? 'check_circle' : 'error'} size={16} filled />
@@ -254,7 +254,7 @@ export default function Calendar() {
         {/* Add form */}
         {showAddForm && (
           <form onSubmit={addEvent} className="bg-white border border-stone-100 shadow-card rounded-2xl p-4 mb-3 space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-1">Date</label>
                 <input type="date" required value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
@@ -330,7 +330,7 @@ function EventRow({ event, onDelete }) {
         <p className="text-sm font-semibold truncate">{event.title}</p>
         <p className="text-[11px] opacity-60">{d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
       </div>
-      <span className="text-[10px] font-bold opacity-60 hidden sm:block">{et.label}</span>
+      <span className="text-[10px] font-bold opacity-60 hidden xs:block sm:block">{et.label}</span>
       <button onClick={() => onDelete(event.id)} className="shrink-0 p-1 rounded-lg hover:bg-black/5 transition-colors opacity-40 hover:opacity-70">
         <Icon name="close" size={14} />
       </button>

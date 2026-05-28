@@ -59,9 +59,10 @@ export default function Laundry() {
         </div>
         {items.length > 0 && (
           <button onClick={washAll} disabled={washingAll}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-50 shrink-0">
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-3 md:px-4 py-2.5 rounded-xl transition-colors disabled:opacity-50 shrink-0">
             <Icon name="local_laundry_service" size={16} filled />
-            {washingAll ? 'Washing…' : 'Wash all'}
+            <span className="hidden sm:inline">{washingAll ? 'Washing…' : 'Wash all'}</span>
+            <span className="sm:hidden">{washingAll ? '…' : 'All'}</span>
           </button>
         )}
       </div>

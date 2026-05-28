@@ -144,11 +144,15 @@ export default function Wardrobe() {
         </div>
       )}
 
-      {/* Add item drawer */}
+      {/* Add item drawer — bottom sheet on mobile, right panel on desktop */}
       {showDrawer && (
-        <div className="fixed inset-0 z-50 flex">
-          <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={closeDrawer} />
-          <div className="w-full max-w-md bg-white shadow-card-lg flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeDrawer} />
+          <div className="absolute inset-x-0 bottom-0 md:inset-x-auto md:inset-y-0 md:right-0 md:w-[28rem] bg-white shadow-card-lg flex flex-col overflow-hidden rounded-t-2xl md:rounded-none max-h-[92vh] md:max-h-full">
+            {/* Drag handle pill — mobile only */}
+            <div className="md:hidden flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-stone-200" />
+            </div>
             <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100">
               <h2 className="text-base font-bold text-stone-900">Add Clothing Item</h2>
               <button onClick={closeDrawer} className="text-stone-400 hover:text-stone-600 transition-colors">
@@ -245,7 +249,7 @@ function ItemCard({ item, onDelete, deleting }) {
         <button
           onClick={() => onDelete(item.id)}
           disabled={deleting}
-          className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 border border-stone-100"
+          className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity hover:bg-red-50 border border-stone-100"
         >
           <Icon name="delete" size={14} className="text-red-400" />
         </button>
