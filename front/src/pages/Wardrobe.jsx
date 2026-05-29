@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { getWardrobe, addWardrobeItem, deleteWardrobeItem, IMG_BASE } from '../api.service';
+import WardrobeScan from '../components/WardrobeScan';
 
 const CATEGORIES = ['tops', 'bottoms', 'outerwear', 'shoes', 'accessories', 'dresses'];
 const CAT_ICON = { tops: 'tshirt', bottoms: 'straighten', outerwear: 'dry_cleaning', shoes: 'steps', accessories: 'diamond', dresses: 'styler' };
@@ -27,6 +28,7 @@ export default function Wardrobe() {
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('all');
   const [showDrawer, setShowDrawer] = useState(false);
+  const [showScan, setShowScan] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(null);
@@ -98,13 +100,22 @@ export default function Wardrobe() {
           <h1 className="text-[28px] font-bold text-stone-900 tracking-tight">My Wardrobe</h1>
           <p className="text-stone-400 text-sm mt-0.5">{items.length} items catalogued</p>
         </div>
-        <button
-          onClick={() => setShowDrawer(true)}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-sm"
-        >
-          <Icon name="add" size={18} />
-          Add item
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowScan(true)}
+            className="flex items-center gap-2 bg-white border border-stone-200 hover:border-indigo-300 hover:bg-indigo-50 text-stone-700 hover:text-indigo-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+          >
+            <Icon name="auto_awesome" size={18} className="text-indigo-500" />
+            Scan
+          </button>
+          <button
+            onClick={() => setShowDrawer(true)}
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+          >
+            <Icon name="add" size={18} />
+            Add item
+          </button>
+        </div>
       </div>
 
       {/* Filter tabs */}
@@ -231,6 +242,13 @@ export default function Wardrobe() {
             </form>
           </div>
         </div>
+      )}
+
+      {showScan && (
+        <WardrobeScan
+          onClose={() => setShowScan(false)}
+          onDone={() => { setShowScan(false); load(); }}
+        />
       )}
     </div>
   );

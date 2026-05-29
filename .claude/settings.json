@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(lsof -i :8888 -sTCP:LISTEN)",
+      "Bash(node -e \"console.log\\(new Date\\(\\).toISOString\\(\\).slice\\(0,10\\)\\)\")"
+    ]
+  }
+}

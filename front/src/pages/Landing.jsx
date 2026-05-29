@@ -322,7 +322,7 @@ export default function Landing() {
 
           {/* Main columns */}
           <div className="relative px-6 md:px-14 pt-14 pb-14">
-            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[5fr_3fr_3fr] gap-12 md:gap-8">
+            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_auto] gap-12 items-start">
 
               {/* Brand */}
               <div className="w-reveal" style={{ transitionDelay: '0ms' }}>
@@ -332,8 +332,8 @@ export default function Landing() {
                   </div>
                   <span className="text-white font-bold text-[15px] tracking-tight leading-none">woardy</span>
                 </div>
-                <p className="text-zinc-500 text-[13px] leading-relaxed max-w-[280px] mb-6">
-                  Smart wardrobe management that plans your outfits around your calendar and the weather forecast. Always know what to wear.
+                <p className="text-zinc-500 text-[13px] leading-relaxed max-w-[300px] mb-6">
+                  Your wardrobe, organised. Outfit suggestions tailored to your calendar and the forecast — every day.
                 </p>
                 <Link
                   to="/dashboard"
@@ -348,39 +348,19 @@ export default function Landing() {
                 <p className="text-[10px] font-semibold text-zinc-600 uppercase tracking-[0.15em] mb-5">App</p>
                 <ul className="space-y-3.5">
                   {[
-                    { icon: 'dashboard',             label: 'Dashboard',      to: '/dashboard' },
-                    { icon: 'checkroom',             label: 'Wardrobe',       to: '/wardrobe'  },
-                    { icon: 'auto_awesome',          label: 'Outfit Planner', to: '/planner'   },
-                    { icon: 'calendar_month',        label: 'Calendar',       to: '/calendar'  },
-                    { icon: 'local_laundry_service', label: 'Laundry',        to: '/laundry'   },
-                  ].map(({ icon, label, to }) => (
+                    { label: 'Dashboard',      to: '/dashboard' },
+                    { label: 'Wardrobe',       to: '/wardrobe'  },
+                    { label: 'Outfit Planner', to: '/planner'   },
+                    { label: 'Calendar',       to: '/calendar'  },
+                    { label: 'Laundry',        to: '/laundry'   },
+                  ].map(({ label, to }) => (
                     <li key={label}>
                       <Link
                         to={to}
-                        className="flex items-center gap-2.5 text-zinc-500 hover:text-white text-[13px] transition-colors duration-150 group"
+                        className="text-zinc-500 hover:text-white text-[13px] transition-colors duration-150"
                       >
-                        <Icon name={icon} size={14} className="text-zinc-600 group-hover:text-indigo-400 transition-colors duration-150" />
                         {label}
                       </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Built with */}
-              <div className="w-reveal" style={{ transitionDelay: '200ms' }}>
-                <p className="text-[10px] font-semibold text-zinc-600 uppercase tracking-[0.15em] mb-5">Built with</p>
-                <ul className="space-y-3.5">
-                  {[
-                    { icon: 'wb_sunny',       label: 'Open-Meteo'       },
-                    { icon: 'calendar_month', label: 'Google Calendar'  },
-                    { icon: 'phone_iphone',   label: 'Apple CalDAV'     },
-                    { icon: 'database',       label: 'MySQL + Sequelize' },
-                    { icon: 'bolt',           label: 'Vite + React'     },
-                  ].map(({ icon, label }) => (
-                    <li key={label} className="flex items-center gap-2.5 text-zinc-600 text-[13px]">
-                      <Icon name={icon} size={14} className="text-zinc-700 shrink-0" />
-                      {label}
                     </li>
                   ))}
                 </ul>

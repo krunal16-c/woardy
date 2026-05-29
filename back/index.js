@@ -53,6 +53,7 @@ app.use('/api/weather', require('./routes/weather'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/google-calendar', require('./routes/googleCalendar'));
 app.use('/api/apple-calendar', require('./routes/appleCalendar'));
+app.use('/api/scan', require('./routes/scan'));
 
 // ── Global error handler ─────────────────────────────────────────────────────
 // eslint-disable-next-line no-unused-vars

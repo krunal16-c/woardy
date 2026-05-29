@@ -44,6 +44,10 @@ export const getGoogleAuthUrl = () => req('/api/google-calendar/auth-url');
 export const getGoogleEvents = () => req('/api/google-calendar/events');
 export const disconnectGoogle = () => req('/api/google-calendar/disconnect', { method: 'DELETE' });
 
+// Wardrobe scanner (Gemini)
+export const scanWardrobe = formData => req('/api/scan', { method: 'POST', body: formData });
+export const confirmScan = items => json('POST', '/api/scan/confirm', { items });
+
 // Apple Calendar
 export const getAppleStatus = () => req('/api/apple-calendar/status');
 export const connectApple = body => json('POST', '/api/apple-calendar/connect', body);
