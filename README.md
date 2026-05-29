@@ -1,4 +1,4 @@
-# WardrobeAI
+# woardy
 
 A wardrobe management app that catalogues your clothes, pulls in calendar events and live weather, and generates 7-day outfit suggestions. Mark outfits as worn to track wear history, and get laundry reminders when items need washing.
 
@@ -30,49 +30,72 @@ A wardrobe management app that catalogues your clothes, pulls in calendar events
 
 ## Prerequisites
 
-- Node.js ≥ 18
-- MySQL 8 (running, with a `test_db` database and `root/root` credentials, or set your own in `back/config/database.js`)
-- Optional: Docker + Docker Compose for containerised setup
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) — required to run MySQL and the full stack
+- Node.js ≥ 18 — only needed for local frontend/backend dev outside Docker
 
 ---
 
-## Local Setup
+## Quick Start (Docker — recommended)
 
-### 1. Clone and install
+Docker Compose spins up MySQL, the Express API, and the React frontend in one command.
+
+### 1. Clone
 
 ```bash
-git clone https://github.com/krunal16-c/Assignment4.git
-cd Assignment4
+git clone https://github.com/krunal16-c/woardy.git
+cd woardy
+```
 
-# Backend
+### 2. Set the encryption key
+
+The backend encrypts stored calendar credentials with AES-256-GCM. Generate a persistent key once and add it to `back/.env`:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Edit `back/.env` and paste the output as the value of `ENCRYPTION_KEY`. Without this, calendar credentials are lost every time the backend restarts.
+
+### 3. Start everything
+
+```bash
+docker compose up --build
+```
+
+Services started:
+
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:8888 |
+| Backend API | http://localhost:3333 |
+| MySQL 8 | internal, port 3306 |
+
+The backend reads `DATABASE_HOST=sql-database` from the compose environment and connects via TCP. DB schema is auto-synced on startup.
+
+### 4. Optional — Google Calendar
+
+| Variable | Where to get it |
+|---|---|
+| `GOOGLE_CLIENT_ID` | [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → OAuth 2.0 Client ID |
+| `GOOGLE_CLIENT_SECRET` | same |
+| `GOOGLE_REDIRECT_URI` | set to `http://localhost:3333/api/google-calendar/callback` |
+
+Add these to `back/.env`, then restart: `docker compose restart njs-backend`.
+
+---
+
+## Local Dev Setup (no Docker)
+
+Run the frontend and backend directly with Node.js. You still need MySQL — either via Docker (`docker compose up -d sql-database`) or Homebrew (`brew install mysql && brew services start mysql`).
+
+When running MySQL locally via Homebrew, set `DATABASE_HOST=127.0.0.1` in `back/.env` so the backend uses TCP instead of the Linux socket path.
+
+```bash
+# Install deps
 cd back && npm install
-
-# Frontend
 cd ../front && npm install
-```
 
-### 2. Configure environment
-
-Copy and edit the backend env:
-
-```bash
-cp back/.env.example back/.env   # or edit back/.env directly
-```
-
-| Variable | Required | Description |
-|---|---|---|
-| `DATABASE_HOST` | no | Override MySQL host (default: localhost via socket) |
-| `ENCRYPTION_KEY` | **recommended** | 64-char hex key for AES-256-GCM — generate with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
-| `GOOGLE_CLIENT_ID` | for Google Calendar | From Google Cloud Console |
-| `GOOGLE_CLIENT_SECRET` | for Google Calendar | From Google Cloud Console |
-| `GOOGLE_REDIRECT_URI` | for Google Calendar | `http://localhost:3333/api/google-calendar/callback` |
-| `FRONTEND_URL` | no | Default `http://localhost:8888` |
-| `PORT` | no | Default `3333` |
-
-### 3. Start servers
-
-```bash
-# Terminal 1 — backend (auto-syncs DB schema on start)
+# Terminal 1 — backend
 cd back && npm run dev
 
 # Terminal 2 — frontend
@@ -80,18 +103,6 @@ cd front && npm run dev
 ```
 
 Open **http://localhost:8888**
-
----
-
-## Docker Setup
-
-```bash
-docker compose up --build
-```
-
-Services: `sql-database` (MySQL 8) · `njs-backend` (:3333) · `rjs-frontend` (:8888)
-
-The backend reads `DATABASE_HOST=sql-database` from the compose environment and connects via TCP instead of a Unix socket.
 
 ---
 

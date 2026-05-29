@@ -23,15 +23,26 @@ A full-stack wardrobe management application that lets users catalogue clothing 
 ## Dev Commands
 
 ```bash
-# Start backend (port 3333)
-cd back && npm run dev
+# Start full stack (MySQL + backend + frontend) via Docker
+docker compose up --build
 
-# Start frontend (port 8888)
-cd front && npm run dev
+# Or start only the DB, then run backend/frontend locally
+docker compose up -d sql-database
+cd back && npm run dev       # port 3333
+cd front && npm run dev      # port 8888
 
 # Run backend tests
 cd back && npm test
 ```
+
+## Local Setup Notes
+
+- **MySQL runs in Docker** — `docker compose up -d sql-database` starts the DB container.
+- **ENCRYPTION_KEY** must be set in `back/.env` before starting. Generate with:
+  `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+  Without it, stored calendar credentials are lost on every restart.
+- When running the backend outside Docker, `DATABASE_HOST` in `back/.env` should be `127.0.0.1` (TCP) not `localhost` (which triggers a Linux socket path that doesn't exist on macOS).
+- Docker Compose sets `DATABASE_HOST=sql-database` automatically for the containerised backend.
 
 ## Development Methodology — TDD / Spec-Driven
 

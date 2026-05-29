@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 
 const LINKS = [
-  { to: '/', icon: 'dashboard', label: 'Dashboard', end: true },
+  { to: '/dashboard', icon: 'dashboard', label: 'Dashboard', end: true },
   { to: '/wardrobe', icon: 'checkroom', label: 'Wardrobe' },
   { to: '/calendar', icon: 'calendar_month', label: 'Calendar' },
   { to: '/planner', icon: 'auto_awesome', label: 'Planner' },
@@ -32,7 +32,7 @@ export default function Navbar() {
           <div className="w-7 h-7 rounded-lg bg-indigo-500 flex items-center justify-center shrink-0">
             <Icon name="style" filled size={16} />
           </div>
-          <span className="text-white font-bold text-[15px] tracking-tight leading-none">WardrobeAI</span>
+          <span className="text-white font-bold text-[15px] tracking-tight leading-none">woardy</span>
         </div>
 
         {/* Nav */}
